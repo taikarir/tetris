@@ -341,18 +341,6 @@ class Game:
                 if shapes[i][j]!=0 and i<=0:
                     self.running=False
                     print("Score: {}\nLines cleared: {}".format(self.score,self.linescl))
-                    #print("Holes:{},Pillars:{},Height:{}".format([self.holes,self.aboveholes],self.pillars,self.height))
-                    #print("Mults:height:{},holes:{},pillars:{},abholes:{},score:{}".format(self.heightmult,self.holemult,self.pillarmult,self.abholemult,self.scoremult))
-#                    self.heightmult=self.heightmult*random.randrange(80,120)/100+0.05*self.linescl
-#                    self.holemult=self.heightmult*random.randrange(80,120)/100+0.01*self.linescl
-#                    self.pillarmult=self.heightmult*random.randrange(80,120)/100+0.01*self.linescl
-#                    self.abholemult=self.heightmult*random.randrange(80,120)/100+0.01*self.linescl
-#                    self.scoremult=self.heightmult*random.randrange(80,120)/100-0.01*self.linescl
-#                    self.score=0
-#                    self.linescl=0
-#                    for ii in range(0,dimy):
-#                        for jj in range(0,dimx):
-#                            self.shapes[ii][jj]=0
                     return
 #initializes pygame and its fonts and events
 pygame.init()

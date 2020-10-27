@@ -140,11 +140,6 @@ class Game:
         pygame.draw.line(screen,(255,255,255),(300,0),(300,550))
         pygame.draw.line(screen,(255,255,255),(50,50),(300,50))
         pygame.draw.rect(screen,(255,255,255),(50,550,250,5))
-        pg=[]
-        for i in range(0,4):
-            pg.append(self.s.pieces[i][0])
-        pygame.draw.line(screen,(255,255,255),(50+25*min(pg),50),(50+25*min(pg),550))
-        pygame.draw.line(screen,(255,255,255),(50+25*(max(pg)+1),50),(50+25*(max(pg)+1),550))
         #displays the held shape
         if self.held!="":
             for i in [self.held.a,self.held.b,self.held.c,self.held.d]:
@@ -316,7 +311,7 @@ class Game:
     #the main loop for the bame
     def gameloop(self):
         self.pieces=[self.s.a,self.s.b,self.s.c,self.s.d]
-        #self.parsemoves()
+        self.parsemoves()
         self.checkend()
         self.clearlines()
         #updates the grid based on the position of the shapes in the grid

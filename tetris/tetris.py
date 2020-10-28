@@ -140,7 +140,7 @@ class Game:
         for i in range(0,4):
             pg.append(self.s.pieces[i][0])
         pygame.draw.line(screen,(255,255,255),(50+25*min(pg),50),(50+25*min(pg),550))
-        pygame.draw.line(screen,(255,255,255),(335-25*max(pg),50),(335-25*max(pg)))
+        pygame.draw.line(screen,(255,255,255),(50+25*(max(pg)+1),50),(50+25*(max(pg)+1),550))
         #displays the held shape
         if self.held!="":
             for i in [self.held.a,self.held.b,self.held.c,self.held.d]:

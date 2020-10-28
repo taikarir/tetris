@@ -1,6 +1,6 @@
 from random import randrange,shuffle
 from math import floor
-from statistics import mean
+from statistics import mean,stdev
 import time
 import pygame
 from pygame.locals import *
@@ -120,10 +120,13 @@ class Game:
         self.running=True
         self.speed=1
         self.heldal=0
-        self.scoremult=1
-        self.holemult=-1.4
-        self.agghmult=-1.85
-        self.bumpymult=-1
+        self.scores=[]
+        #multipliers for attributes
+        self.maxhmult=-2.0     #-0.0
+        self.scoremult=1.3     #1.3
+        self.holemult=-1.8     #-1.4   -1.8
+        self.agghmult=-4.85    #-2.85
+        self.bumpymult=-1.1    #-1.0   -1.0
         self.shapez=6
         self.shapenum=["line","t","l","li","square","z","zi"]
         self.nextp=Shape(self.shapenum[randrange(0,len(self.shapenum))])
@@ -158,6 +161,7 @@ class Game:
                         pygame.draw.rect(screen,colorshape[self.shape],(50+j*25,50+i*25,25,25))
                     else:
                         pygame.draw.rect(screen,(25,25,25),(51+j*25,51+i*25,23,23))
+    #checks if a certain move will score points
     def checkScore(self):
         gn=0
         for k in range(0,dimy):
@@ -168,17 +172,20 @@ class Game:
             if gm==dimx:
                 gn+=1
         self.incscore=gn
+    #checks if a certain move will add holes
     def checkHoles(self):
         for i in range(0,dimx):
             for j in range(0,dimy):
                 if self.tshapes[j][i]==0 and self.tshapes[j-1][i]!=0:
                     self.holes+=1
+    #checks the height of each column
     def getHeights(self):
         for i in range(0,dimx):
             self.heights.append(0)
             for j in range(dimy-1,0,-1):
                 if self.tshapes[j][i]!=0:
                     self.heights[i]=dimy-j
+    #goes through all possible moves to find the best one based on amount of holes, heights of columns, etc.
     def parsemoves(self):
         self.possible=[]
         self.getto=[]
@@ -188,6 +195,7 @@ class Game:
             ii=1
         else:
             ii=4
+        #goes through every move and add it to a list
         for ii in range(0,4):
             for j in range(0,11):
                 self.test=Shape(self.shape)
@@ -210,6 +218,7 @@ class Game:
         self.values=[]
         self.tshapes=[]
         self.check=[]
+        #finds the value of each possible move
         for ii in range(0,len(self.possible)):
             self.tshapes=self.shapes.copy()
             self.nnn=[]
@@ -220,16 +229,20 @@ class Game:
             self.heights=[]
             self.incscore=0
             self.aggheight=0
+            self.maxheight=0
             self.getHeights()
             self.checkHoles()
             self.checkScore()
             self.aggheight=sum(self.heights)
+            self.maxheight=max(self.heights)
             for i in range(0,len(self.heights)-1):
                 self.bumpiness+=abs(self.heights[i]-self.heights[i+1])
-            self.values.append(self.scoremult*self.incscore+self.bumpymult*self.bumpiness+self.holemult*self.holes+self.agghmult*self.aggheight)
+            self.values.append(self.maxhmult*self.maxheight+self.scoremult*self.incscore+self.bumpymult*self.bumpiness+self.holemult*self.holes+self.agghmult*self.aggheight)
             for jj in range(0,len(self.possible[ii])):
                 self.tshapes[self.possible[ii][jj][1]][self.possible[ii][jj][0]]=0
+        #finds the best possible move based on the values
         lll=self.getto[self.values.index(max(self.values))]
+        #moves the current shape to the best possible position
         for i in range(0,lll[0]):
             self.s.rotate()
         for i in range(0,lll[1]):
@@ -334,8 +347,15 @@ class Game:
         for i in range(0,dimy):
             for j in range(0,dimx):
                 if shapes[i][j]!=0 and i<=0:
-                    self.running=False
+                    #self.running=False
                     print("Score: {}\nLines cleared: {}".format(self.score,self.linescl))
+                    for ii in range(0,dimy):
+                        for jj in range(0,dimx):
+                            self.shapes[ii][jj]=0
+                    self.scores.append(self.linescl)
+                    print("Avg:",mean(self.scores))
+                    print("Std:",stdev(self.scores))
+                    self.score=0;self.linescl=0
                     return
 #initializes pygame and its fonts and events
 pygame.init()
@@ -366,7 +386,7 @@ while initr:
     starttext=font.render("Press ENTER to Start",True,(255,255,255))
     frac=float(time.clock())-int(time.clock())
     if (frac<0.25 and frac>0) or (frac<0.75 and frac>0.5):
-        screen.blit(starttext,(50,150))
+        screen.blit(starttext,(60,150))
     pygame.display.flip()
 #game loop for pygame to run the game and check user input
 while Tetris.running:

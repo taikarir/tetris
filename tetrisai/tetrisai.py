@@ -118,15 +118,13 @@ class Game:
         self.score=0
         self.linescl=0
         self.running=True
-        self.speed=1
         self.heldal=0
-        self.scores=[]
         #multipliers for attributes
-        self.maxhmult=-2.0     #-0.0
+        self.maxhmult=-2.0     #-2.0
         self.scoremult=1.3     #1.3
-        self.holemult=-1.8     #-1.4   -1.8
-        self.agghmult=-4.85    #-2.85
-        self.bumpymult=-1.1    #-1.0   -1.0
+        self.holemult=-1.8     #-1.8   
+        self.agghmult=-4.85    #-4.9
+        self.bumpymult=-1.0    #-1.1
         self.shapez=6
         self.shapenum=["line","t","l","li","square","z","zi"]
         self.nextp=Shape(self.shapenum[randrange(0,len(self.shapenum))])
@@ -224,6 +222,7 @@ class Game:
             self.nnn=[]
             for jj in range(0,len(self.possible[ii])):
                 self.tshapes[self.possible[ii][jj][1]][self.possible[ii][jj][0]]=self.shape
+            #attributes that determine the best move
             self.holes=0
             self.bumpiness=0
             self.heights=[]
@@ -237,6 +236,7 @@ class Game:
             self.maxheight=max(self.heights)
             for i in range(0,len(self.heights)-1):
                 self.bumpiness+=abs(self.heights[i]-self.heights[i+1])
+            #adding together the attributes
             self.values.append(self.maxhmult*self.maxheight+self.scoremult*self.incscore+self.bumpymult*self.bumpiness+self.holemult*self.holes+self.agghmult*self.aggheight)
             for jj in range(0,len(self.possible[ii])):
                 self.tshapes[self.possible[ii][jj][1]][self.possible[ii][jj][0]]=0
@@ -250,7 +250,7 @@ class Game:
                 self.s.moveleft()
             else:
                 self.s.moveright()
-        self.s.harddrop()
+        #self.s.harddrop()
         self.prtscr()
     #creates a new shape
     def newshape(self):
@@ -261,6 +261,7 @@ class Game:
         self.s=Shape(self.shape)
         self.nextp=Shape(self.shapenum[self.shapez+1])
         self.shapez+=1
+        self.parsemoves()
     #holds the current shape and brings the held shape into play
     def holdshape(self):
         if self.held=="":
@@ -324,7 +325,7 @@ class Game:
     #the main loop for the bame
     def gameloop(self):
         self.pieces=[self.s.a,self.s.b,self.s.c,self.s.d]
-        self.parsemoves()
+        #self.parsemoves()
         self.checkend()
         self.clearlines()
         #updates the grid based on the position of the shapes in the grid
@@ -338,24 +339,12 @@ class Game:
         for i in self.pieces:
             if i[1]<dimy:
                 self.grid[i[1]][i[0]]=1
-        #pieces will fall faster after enough lines have been cleared
-        if self.linescl>=40:
-            self.speed=2
-        if self.linescl>=80:
-            self.speed=3
         #checks if the game is over
         for i in range(0,dimy):
             for j in range(0,dimx):
                 if shapes[i][j]!=0 and i<=0:
-                    #self.running=False
+                    self.running=False
                     print("Score: {}\nLines cleared: {}".format(self.score,self.linescl))
-                    for ii in range(0,dimy):
-                        for jj in range(0,dimx):
-                            self.shapes[ii][jj]=0
-                    self.scores.append(self.linescl)
-                    print("Avg:",mean(self.scores))
-                    print("Std:",stdev(self.scores))
-                    self.score=0;self.linescl=0
                     return
 #initializes pygame and its fonts and events
 pygame.init()
@@ -364,12 +353,7 @@ pygame.display.set_caption("Tetris")
 font=pygame.font.Font("freesansbold.ttf",20)
 sfont=pygame.font.Font("freesansbold.ttf",15)
 MOVE1=pygame.USEREVENT+1
-MOVE2=pygame.USEREVENT+2
-MOVE3=pygame.USEREVENT+3
-pygame.time.set_timer(MOVE1,500)
-pygame.time.set_timer(MOVE2,400)
-pygame.time.set_timer(MOVE3,300)
-#creates a new game
+pygame.time.set_timer(MOVE1,30)
 Tetris=Game(gamegrid,shapes)
 Tetris.newshape()
 initr=True
@@ -397,28 +381,10 @@ while Tetris.running:
             Tetris.running=False
             pygame.quit()
             quit()
-        #checking keypress
-        elif i.type==pygame.KEYDOWN:
-            if i.key==pygame.K_SPACE:
-                Tetris.s.harddrop()
-            elif i.key==pygame.K_UP:
-                Tetris.s.rotate()
-            elif i.key==pygame.K_RIGHT:
-                Tetris.s.moveright()
-            elif i.key==pygame.K_LEFT:
-                Tetris.s.moveleft()
-            elif i.key==pygame.K_c:
-                Tetris.holdshape()
-            elif i.key==pygame.K_x:
-                Tetris.parsemoves()
-        #increases speed after certain number of lines
-        elif (i.type==MOVE1 and Tetris.speed==1) or (i.type==MOVE2 and Tetris.speed==2) or (i.type==MOVE3 and Tetris.speed==3):
-                #Tetris.s.movedown()
-                pass
-    key=pygame.key.get_pressed()
-    if key[K_DOWN]:
-        pygame.time.wait(80)
-        Tetris.s.movedown()
+        #moves the piece down every certain amount of time
+        elif i.type==MOVE1:
+            Tetris.s.movedown()
+            Tetris.prtscr()
     Tetris.gameloop()
     Tetris.prtscr()
     pygame.display.flip()

@@ -268,6 +268,10 @@ MOVE3=pygame.USEREVENT+3
 pygame.time.set_timer(MOVE1,500)
 pygame.time.set_timer(MOVE2,400)
 pygame.time.set_timer(MOVE3,300)
+pygame.mixer.init()
+pygame.mixer.music.load("/Users/mkarir/Downloads/Tetris_theme.ogg")
+pygame.mixer.music.set_volume(0.1)
+pygame.mixer.music.play(loops=-1)
 #creates a new game
 Tetris=Game(gamegrid,shapes)
 Tetris.newshape()

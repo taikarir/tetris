@@ -250,7 +250,7 @@ class Game:
                 self.s.moveleft()
             else:
                 self.s.moveright()
-        #self.s.harddrop()
+        self.s.harddrop()
         self.prtscr()
     #creates a new shape
     def newshape(self):
@@ -261,7 +261,6 @@ class Game:
         self.s=Shape(self.shape)
         self.nextp=Shape(self.shapenum[self.shapez+1])
         self.shapez+=1
-        self.parsemoves()
     #holds the current shape and brings the held shape into play
     def holdshape(self):
         if self.held=="":
@@ -325,7 +324,7 @@ class Game:
     #the main loop for the bame
     def gameloop(self):
         self.pieces=[self.s.a,self.s.b,self.s.c,self.s.d]
-        #self.parsemoves()
+        self.parsemoves()
         self.checkend()
         self.clearlines()
         #updates the grid based on the position of the shapes in the grid
@@ -382,9 +381,9 @@ while Tetris.running:
             pygame.quit()
             quit()
         #moves the piece down every certain amount of time
-        elif i.type==MOVE1:
-            Tetris.s.movedown()
-            Tetris.prtscr()
+        #elif i.type==MOVE1:
+            #Tetris.s.movedown()
+            #Tetris.prtscr()
     Tetris.gameloop()
     Tetris.prtscr()
     pygame.display.flip()

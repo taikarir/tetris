@@ -139,8 +139,9 @@ class Game:
         pg=[]
         for i in range(0,4):
             pg.append(self.s.pieces[i][0])
-        pygame.draw.line(screen,(255,255,255),(50+25*min(pg),50),(50+25*min(pg),550))
-        pygame.draw.line(screen,(255,255,255),(50+25*(max(pg)+1),50),(50+25*(max(pg)+1),550))
+        if initr==False:
+            pygame.draw.line(screen,(255,255,255),(50+25*min(pg),50),(50+25*min(pg),550))
+            pygame.draw.line(screen,(255,255,255),(50+25*(max(pg)+1),50),(50+25*(max(pg)+1),550))
         #displays the held shape
         if self.held!="":
             for i in [self.held.a,self.held.b,self.held.c,self.held.d]:
@@ -269,7 +270,7 @@ pygame.time.set_timer(MOVE1,500)
 pygame.time.set_timer(MOVE2,400)
 pygame.time.set_timer(MOVE3,300)
 pygame.mixer.init()
-pygame.mixer.music.load("/Users/mkarir/Downloads/Tetris_theme.ogg")
+pygame.mixer.music.load("Tetris_theme.ogg")
 pygame.mixer.music.set_volume(0.1)
 pygame.mixer.music.play(loops=-1)
 #creates a new game
@@ -289,7 +290,7 @@ while initr:
     starttext=font.render("Press ENTER to Start",True,(255,255,255))
     frac=float(time.clock())-int(time.clock())
     if (frac<0.25 and frac>0) or (frac<0.75 and frac>0.5):
-        screen.blit(starttext,(50,150))
+        screen.blit(starttext,(75,150))
     pygame.display.flip()
 #game loop for pygame to run the game and check user input
 while Tetris.running:
@@ -317,7 +318,7 @@ while Tetris.running:
                 Tetris.s.movedown()
     key=pygame.key.get_pressed()
     if key[K_DOWN]:
-        pygame.time.wait(80)
+        pygame.time.wait(60)
         Tetris.s.movedown()
     Tetris.gameloop()
     Tetris.prtscr()

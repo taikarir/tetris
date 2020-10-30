@@ -1,7 +1,7 @@
 #   Change these to change the speed of falling blocks in each stage and after
 #   how many lines cleared the next stage will begin
-speed=[0.5,0.4,0.3]   #the numbers are delay between block moving down 1
-afterlines=[40,80]
+speeds=[500,400,300]   #the numbers are delay between block moving down 1
+afterline=[40,80]
 #
 #
 from random import randrange,shuffle
@@ -252,7 +252,7 @@ class Game:
             if i[1]<dimy:
                 self.grid[i[1]][i[0]]=1
         #pieces will fall faster after enough lines have been cleared
-        if self.linescl>=afterlines[0]:
+        if self.linescl>=afterline[0]:
             self.speed=2
         if self.linescl>=afterline[1]:
             self.speed=3

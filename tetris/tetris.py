@@ -1,3 +1,9 @@
+#   Change these to change the speed of falling blocks in each stage and after
+#   how many lines cleared the next stage will begin
+speed=[0.5,0.4,0.3]   #the numbers are delay between block moving down 1
+afterlines=[40,80]
+#
+#
 from random import randrange,shuffle
 from math import floor
 from statistics import mean
@@ -246,9 +252,9 @@ class Game:
             if i[1]<dimy:
                 self.grid[i[1]][i[0]]=1
         #pieces will fall faster after enough lines have been cleared
-        if self.linescl>=40:
+        if self.linescl>=afterlines[0]:
             self.speed=2
-        if self.linescl>=80:
+        if self.linescl>=afterline[1]:
             self.speed=3
         #checks if the game is over
         for i in range(0,dimy):
@@ -266,10 +272,11 @@ sfont=pygame.font.Font("freesansbold.ttf",15)
 MOVE1=pygame.USEREVENT+1
 MOVE2=pygame.USEREVENT+2
 MOVE3=pygame.USEREVENT+3
-pygame.time.set_timer(MOVE1,500)
-pygame.time.set_timer(MOVE2,400)
-pygame.time.set_timer(MOVE3,300)
+pygame.time.set_timer(MOVE1,speeds[0])
+pygame.time.set_timer(MOVE2,speeds[1])
+pygame.time.set_timer(MOVE3,speeds[2])
 pygame.mixer.init()
+#loads and plays music
 pygame.mixer.music.load("Tetris_theme.ogg")
 pygame.mixer.music.set_volume(0.1)
 pygame.mixer.music.play(loops=-1)

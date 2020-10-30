@@ -1,5 +1,7 @@
 This is a game of Tetris, made with the pygame module.
 
+To do: add hold function to AI
+
 <b>-Controls-</b><br />
 Right arrow -move current shape right<br />
 Left arrow -move current shape left<br />

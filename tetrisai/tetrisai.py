@@ -122,7 +122,7 @@ class Game:
         #multipliers for attributes
         self.maxhmult=-2.0     #-2.0
         self.scoremult=1.3     #1.3
-        self.holemult=-1.8     #-1.8   
+        self.holemult=-2.0     #-1.8   
         self.agghmult=-4.85    #-4.9
         self.bumpymult=-1.0    #-1.1
         self.shapez=6
@@ -184,19 +184,19 @@ class Game:
                 if self.tshapes[j][i]!=0:
                     self.heights[i]=dimy-j
     #goes through all possible moves to find the best one based on amount of holes, heights of columns, etc.
-    def parsemoves(self):
+    def parsemoves(self,theshape):
         self.possible=[]
         self.getto=[]
-        if self.shape=="line":
+        if theshape=="line":
             ii=2
-        elif self.shape=="square":
+        elif theshape=="square":
             ii=1
         else:
             ii=4
         #goes through every move and add it to a list
         for ii in range(0,4):
             for j in range(0,11):
-                self.test=Shape(self.shape)
+                self.test=Shape(theshape)
                 for k in range(0,ii):
                     self.test.rotate()
                 if j<7:
@@ -221,7 +221,7 @@ class Game:
             self.tshapes=self.shapes.copy()
             self.nnn=[]
             for jj in range(0,len(self.possible[ii])):
-                self.tshapes[self.possible[ii][jj][1]][self.possible[ii][jj][0]]=self.shape
+                self.tshapes[self.possible[ii][jj][1]][self.possible[ii][jj][0]]=theshape
             #attributes that determine the best move
             self.holes=0
             self.bumpiness=0
@@ -241,16 +241,28 @@ class Game:
             for jj in range(0,len(self.possible[ii])):
                 self.tshapes[self.possible[ii][jj][1]][self.possible[ii][jj][0]]=0
         #finds the best possible move based on the values
-        lll=self.getto[self.values.index(max(self.values))]
-        #moves the current shape to the best possible position
-        for i in range(0,lll[0]):
+        return max(self.values),self.getto[self.values.index(max(self.values))]
+    def choosemove(self):
+        #lll=[0,0];ooo=[0,0]
+        #lll[0],ooo[0]=self.parsemoves(self.shape)
+        #lll[1],ooo[1]=self.parsemoves(self.held.shape)
+        #if lll[0]>=lll[1]:
+        #    ooo=ooo[0]
+        #elif lll[1]>lll[0]:
+        #    ooo=ooo[1]
+        #    self.holdshape()
+        o,oo=self.parsemoves(self.shape)
+        for i in range(0,oo[0]):
             self.s.rotate()
-        for i in range(0,lll[1]):
-            if lll[2]==True:
+        for i in range(0,oo[1]):
+            if oo[2]==True:
                 self.s.moveleft()
             else:
                 self.s.moveright()
         self.s.harddrop()
+        self.prtscr()
+        self.checkend()
+        self.clearlines()
         self.prtscr()
     #creates a new shape
     def newshape(self):
@@ -324,9 +336,9 @@ class Game:
     #the main loop for the bame
     def gameloop(self):
         self.pieces=[self.s.a,self.s.b,self.s.c,self.s.d]
-        self.parsemoves()
-        self.checkend()
-        self.clearlines()
+        self.choosemove()
+        #self.checkend()
+        #self.clearlines()
         #updates the grid based on the position of the shapes in the grid
         for i in range(0,dimy):
             for j in range(0,dimx):
@@ -380,6 +392,8 @@ while Tetris.running:
             Tetris.running=False
             pygame.quit()
             quit()
+        if i.type==pygame.KEYDOWN and i.key==pygame.K_x:
+            Tetris.choosemove()
         #moves the piece down every certain amount of time
         #elif i.type==MOVE1:
             #Tetris.s.movedown()

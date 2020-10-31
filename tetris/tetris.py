@@ -1,6 +1,6 @@
 #   Change these to change the speed of falling blocks in each stage and after
 #   how many lines cleared the next stage will begin
-speeds=[500,400,300]   #the numbers are delay between block moving down 1
+speeds=[500,400,300]   #the numbers are delay in ms between block moving down 1
 afterline=[40,80]
 #
 #
@@ -135,13 +135,15 @@ class Game:
         scoretext=font.render("Score-{} Lines-{}".format(self.score,self.linescl),True,(255,255,255),(0,0,0))
         heldtext=sfont.render("Held:",True,(255,255,255),(0,0,0))
         nexttext=sfont.render("Next:",True,(255,255,255),(0,0,0))
+        soundtext=sfont.render("M to toggle      Sound on: {}".format(pygame.mixer.music.get_volume()>0),True,(255,255,255))
         screen.blit(heldtext,(5,0))
         screen.blit(nexttext,(310,0))
-        screen.blit(scoretext,(75,10))
+        screen.blit(scoretext,(55,10))
+        screen.blit(soundtext,(75,555))
         pygame.draw.line(screen,(255,255,255),(50,0),(50,550))
         pygame.draw.line(screen,(255,255,255),(300,0),(300,550))
         pygame.draw.line(screen,(255,255,255),(50,50),(300,50))
-        pygame.draw.rect(screen,(255,255,255),(50,550,250,5))
+        pygame.draw.rect(screen,(255,255,255),(50,550,251,5))
         pg=[]
         for i in range(0,4):
             pg.append(self.s.pieces[i][0])
@@ -168,10 +170,10 @@ class Game:
                         pygame.draw.rect(screen,(25,25,25),(51+j*25,51+i*25,23,23))
     #creates a new shape
     def newshape(self):
-        self.shape=self.shapenum[self.shapez]
         if self.shapez==6:
             shuffle(self.shapenum)
             self.shapez=-1
+        self.shape=self.shapenum[self.shapez]
         self.s=Shape(self.shape)
         self.nextp=Shape(self.shapenum[self.shapez+1])
         self.shapez+=1
@@ -265,7 +267,7 @@ class Game:
                     return
 #initializes pygame and its fonts and events
 pygame.init()
-screen=pygame.display.set_mode([350,555])
+screen=pygame.display.set_mode([350,575])
 pygame.display.set_caption("Tetris")
 font=pygame.font.Font("freesansbold.ttf",20)
 sfont=pygame.font.Font("freesansbold.ttf",15)
@@ -279,7 +281,6 @@ pygame.mixer.init()
 #loads and plays music
 pygame.mixer.music.load("Tetris_theme.ogg")
 pygame.mixer.music.set_volume(0.1)
-pygame.mixer.music.play(loops=-1)
 #creates a new game
 Tetris=Game(gamegrid,shapes)
 Tetris.newshape()
@@ -291,14 +292,21 @@ while initr:
         if i.type==pygame.QUIT:
             quit()
             pygame.quit()
-        if i.type==pygame.KEYDOWN and i.key==pygame.K_RETURN:
-            initr=False
+        if i.type==pygame.KEYDOWN:
+            if i.key==pygame.K_RETURN:
+                initr=False
+            elif i.key==pygame.K_m:
+                if pygame.mixer.music.get_volume()>0:
+                    pygame.mixer.music.set_volume(0)
+                else:
+                    pygame.mixer.music.set_volume(0.1)
     Tetris.prtscr()
     starttext=font.render("Press ENTER to Start",True,(255,255,255))
     frac=float(time.clock())-int(time.clock())
     if (frac<0.25 and frac>0) or (frac<0.75 and frac>0.5):
         screen.blit(starttext,(75,150))
     pygame.display.flip()
+pygame.mixer.music.play(loops=-1)
 #game loop for pygame to run the game and check user input
 while Tetris.running:
     screen.fill((0,0,0))
@@ -320,6 +328,11 @@ while Tetris.running:
                 Tetris.s.moveleft()
             elif i.key==pygame.K_c:
                 Tetris.holdshape()
+            elif i.key==pygame.K_m:
+                if pygame.mixer.music.get_volume()>0:
+                    pygame.mixer.music.set_volume(0)
+                else:
+                    pygame.mixer.music.set_volume(0.1)
         #increases speed after certain number of lines
         elif (i.type==MOVE1 and Tetris.speed==1) or (i.type==MOVE2 and Tetris.speed==2) or (i.type==MOVE3 and Tetris.speed==3):
                 Tetris.s.movedown()
